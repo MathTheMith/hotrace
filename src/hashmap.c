@@ -17,7 +17,7 @@
 #include <string.h>
 
 
-void	init_map(hashmap *map, size_t key_size, size_t value_size, bool (*cmp)(const void*, const *void))
+void	init_map(hashmap *map, size_t key_size, size_t value_size, bool (*cmp)(const void*, const void*))
 {
     map->count = 0;
     map->capacity = 0;
@@ -127,12 +127,11 @@ static void	*ft_memcpy(void *dest, const void *src, size_t n);
 
 static void resize_array(hashmap *map)
 {
-    int		new_capacity;
     size_t	entry_size;
     uint8_t	*old_entries;
     uint8_t	*new_entries;
 
-    new_capacity = map->capacity * 1.5;
+    map->new_capacity = map->capacity * 1.5;
     entry_size = map->key_size + map->value_size;
     old_entries = (uint8_t *)map->array;
     new_entries = decrease_malloc(map, entry_size);
@@ -140,6 +139,33 @@ static void resize_array(hashmap *map)
     ft_memset(new_entries, 0, map->capacity * entry_size);
     map->count = 0;
     copy_values(map, old_entries, new_entries);
+}
+
+static void copy_values(hashmap* map, uint8_t *old_entries, uint8_t *new_entries)
+{
+    int	    i;
+    uint8_t *old_entry;
+    uint8_t *dest;
+    void    *key;
+    void    *value;
+
+    i = 0;
+    while (i < map->capacity)
+    {
+	old_entry = old_entries + (i * map->value_size + map->key_size);
+	key = old_entry;
+	value = old_entry + map->key_size;
+	if (is_null(key, map->key_size))
+	    continue ;
+	dest = linear_probing(map, map->array, key, map->value_size + map->key_size);
+	ft_memcpy(dest, key, map->key_size);
+	ft_memcpy(dest + map->key_size, value, map->value_size);
+	map->count++;
+	i++;
+    }
+    free(map->array);
+    map->array = new_entries;
+    map->capacity = map->new_capacity;
 }
 
 bool map_put(hashmap *map, void *key, void *value)
@@ -158,32 +184,16 @@ bool map_put(hashmap *map, void *key, void *value)
     return (is_new_key);
 }
 
-void	*map_get
-
-static void copy_values(hashmap* map, uint8_t *old_entries, uint8_t *new_entries)
+void *map_get(hashmap *map, void *key)
 {
-    int	    i;
-    uint8_t *old_entry;
-    uint8_t *dest;
-    void    *key;
-    void    *value;
+    uint8_t *entry;
 
-    i = 0;
-    while (i < map->capacity)
-    {
-	key = old_entry;
-	value = old_entry + map->key_size;
-	if (is_null(key, map->key_size))
-	    continue ;
-	dest = linear_probing(map, map->array, key, map->value_size + map->key_size);
-	ft_memcpy(dest, key, map->key_size);
-	ft_memcpy(dest + map->key_size, value, map->value_size);
-	map->count++;
-	i++;
-    }
-    free(map->array);
-    map->array = new_entries;
-    map->capacity = map->new_capacity;
+    if (map->capacity == 0)
+	return NULL;
+    entry = linear_probing(map, map->array, key, (map->key_size + map->value_size));
+    if (is_null(entry, map->key_size)) 
+	return NULL;
+    return entry + map->key_size;
 }
 
 static uint8_t	*decrease_malloc(hashmap* map, size_t entry_size)
@@ -194,7 +204,7 @@ static uint8_t	*decrease_malloc(hashmap* map, size_t entry_size)
     {
 	new_entries = malloc(map->new_capacity * entry_size);
 	if (!new_entries)
-	    map->new_capacity * 0.90;
+	    map->new_capacity *= 0.90;
 	else
 	    break ;
 	if (map->new_capacity <= map->capacity)

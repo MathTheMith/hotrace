@@ -6,78 +6,90 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 08:15:28 by mvachon           #+#    #+#             */
-/*   Updated: 2026/02/28 18:13:09 by lud-adam         ###   ########.fr       */
+/*   Updated: 2026/02/28 18:15:37 by lud-adam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <stdbool.h>
 
-char    *read_line(void)
+#define BUFFER_SIZE 4096
+
+
+char *read_line(void)
 {
-    char    *buffer;
-    char    c;
-    int     i;
-    int     bytes;
-    int     j;
-    char    *new_buffer;
+    static char buffer[BUFFER_SIZE];
+    static int  buf_size = 0;
+    static int  buf_pos = 0;
 
-    i = 0;
-    buffer = NULL;
-    bytes = read(0, &c, 1);
-    if (bytes == 0)
-        return (NULL);
+    char *line = NULL;
+    int   line_len = 0;
 
-    while (bytes > 0 && c != '\n')
+    while (1)
     {
-        new_buffer = malloc(i + 2);
-        if (!new_buffer)
-            return (NULL);
-        j = 0;
-        while (j < i)
+        if (buf_pos >= buf_size)
         {
-            new_buffer[j] = buffer[j];
-            j++;
+            buf_size = read(0, buffer, BUFFER_SIZE);
+            buf_pos = 0;
+            if (buf_size <= 0)
+                return line;
         }
-        new_buffer[i] = c;
-        new_buffer[i + 1] = '\0';
+        if (buffer[buf_pos] == '\n')
+        {
+            buf_pos++;
+            break;
+        }
+        char *tmp = realloc(line, line_len + 2);
+        if (!tmp)
+        {
+            free(line);
+            return NULL;
+        }
+        line = tmp;
+        line[line_len++] = buffer[buf_pos++];
+        line[line_len] = '\0';
+    }
 
-        free(buffer);
-        buffer = new_buffer;
-        i++;
-        bytes = read(0, &c, 1);
-    }
-    if (!buffer)
-    {
-        buffer = malloc(1);
-        if (!buffer)
-            return (NULL);
-        buffer[0] = '\0';
-    }
-    return (buffer);
+    return line;
+}
+
+bool print_line(char **line)
+{
+    int len = 0;
+    *line = read_line();
+	if (!*line)
+		return false;
+	if ((*line)[0] == '\0')
+	{
+		free(*line);
+		return false;
+	}
+	len = 0;
+	while ((*line)[len])
+		len++;
+	write(1, *line, len);
+	write(1, "\n", 1);
+    return true;
 }
 
 int	main(void)
 {
 	char	*line;
-	int		len;
-
+        line = NULL;
+    // int tab[1024];
+    if (!line)
+        {return 1;}
 	while (1)
 	{
-		line = read_line();
-		if (!line)
-			break ;
-		if (line[0] == '\0')
-		{
-			free(line);
-			continue ;
-		}
-		write(1, "value: ", 7);
-		len = 0;
-		while (line[len])
-			len++;
-		write(1, line, len);
+        write(1, "keyword: ", 9);
+        if (!print_line(&line))
+            break;
+        write(1, "value: ", 7);
+        if (!print_line(&line))
+            break;
 		write(1, "\n", 1);
 		free(line);
 	}
