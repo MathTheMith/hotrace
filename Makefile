@@ -3,53 +3,140 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+         #
+#    By: lud-adam <lud-adam@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/12/03 12:48:15 by mvachon           #+#    #+#              #
-#    Updated: 2025/12/03 12:48:15 by mvachon          ###   ########.fr        #
+#    Created: 2026/02/28 12:25:05 by lud-adam          #+#    #+#              #
+#    Updated: 2026/02/28 12:28:44 by lud-adam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+.PHONY : all fclean re bonus clean-bin clean-obj
+CC = cc
+CFLAGS = -Wextra -Wall -Werror
+DEPENDANCIES = -MMD -MP
+NO_DIR = --no-print-directory
+
+MAKE := $(MAKE) -j $(NO_DIR)
 NAME = hotrace
-CXX = cc
-CXXFLAGS = -Wall -Wextra -Werror
 
-SRCS = main.c
+CFLAGS_DEBUG = -Wall -Wextra -g3 -D DEBUG=1
+CC_DEBUG = clang
+CC_DEBUG_CFLAGS = -g3 -D DEBUG=1 -Weverything -Wno-padded -pedantic -O2 -Wwrite-strings -Wconversion -Wno-suggest-override -Wno-suggest-destructor-override -Wno-incompatible-pointer-types-discards-qualifiers -Wno-disabled-macro-expansion
+#############################################################################################
+#                                                                                           #
+#                                         DIRECTORIES                                       #
+#                                                                                           #
+#############################################################################################
 
-HEADERS = 
+P_SRC = src/
+P_INC = inc/
+P_OBJ = .obj/
 
-OBJDIR = obj
-OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
+#############################################################################################
+#                                                                                           #
+#                                           FILES                                           #
+#                                                                                           #
+#############################################################################################
 
-GREEN = \033[0;32m
-RED = \033[0;31m
-RESET = \033[0m
+SRC = \
+	  main.c \
+
+#############################################################################################
+#                                                                                           #
+#                                        MANIPULATION                                       #
+#                                                                                           #
+#############################################################################################
+SRCS = \
+	$(addprefix $(P_SRC), $(SRC)) \
+
+OBJS =  \
+	$(subst $(P_SRC), $(P_OBJ), $(SRCS:.c=.o)) \
+
+P_OBJS = $(subst $(P_SRC), $(P_OBJ), $(SRCS))
+
+DEPS = $(OBJS:%.o=%.d)
+
+#############################################################################################
+#                                                                                           #
+#                                          RULES                                            #
+#                                                                                           #
+#############################################################################################
 
 all: $(NAME)
 
-$(OBJDIR):
-	@mkdir -p $(OBJDIR)
+$(NAME): $(OBJS)
+	@$(CC) $(CFLAGS) -o $@ $(OBJS) && \
+	echo "$(Green)Creating executable $@$(Color_Off)" || \
+	echo "$(Red)Error creating $@$(Color_Off)"
 
-$(NAME): $(OBJDIR) $(OBJS)
-	@$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
-	@echo "$(GREEN)✓ $(NAME) compiled successfully!$(RESET)"
+$(P_OBJ)%.o: $(P_SRC)%.c
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -I $(P_INC) -c $< -o $@ && \
+	echo "$(Cyan)Compiling $<$(Color_Off)" || \
+	echo "$(Red)Error compiling $<$(Color_Off)"
 
-$(OBJDIR)/%.o: %.cpp $(HEADERS)
-	@$(CXX) $(CXXFLAGS) -c $< -o $@
-	@echo "$(GREEN)✓ Compiled: $<$(RESET)"
-
+#############################################################################################
+#                                                                                           #
+#                                      Other RULES                                          #
+#                                                                                           #
+#############################################################################################
 
 clean:
-	@rm -rf $(OBJDIR)
-	@echo "$(RED)✗ Object files removed$(RESET)"
+	rm -rfd $(P_OBJ)
+	rm -rfd $(DEPS)
 
-fclean: clean
-	@rm -f $(NAME)
-	@echo "$(RED)✗ $(NAME) removed$(RESET)"
+clean-bin:
+	rm -f $(NAME)
 
-re: fclean all
+clean-obj:
+	@$(MAKE) clean
 
-run : all
-	@./hotrace
+fclean:
+	@$(MAKE) clean-obj
+	@$(MAKE) clean-bin
 
-.PHONY: all clean fclean re run
+re:
+	@$(MAKE) fclean
+	@$(MAKE) all
+
+clear: clean
+fclear: fclean
+flcean: fclean
+flcear: fclean
+
+#############################################################################################
+#                                                                                           #
+#                                           DEBUG                                           #
+#                                                                                           #
+#############################################################################################
+
+debug:
+	@$(MAKE) $(NAME) CFLAGS="$(CFLAGS_DEBUG)"
+
+#############################################################################################
+#                                                                                           #
+#                                         COSMETIC                                          #
+#                                                                                           #
+#############################################################################################
+
+Color_Off=\033[0m       # Text Reset
+
+Black=\033[0;30m
+Red=\033[0;31m
+Green=\033[0;32m
+Yellow=\033[0;33m
+Blue=\033[0;34m
+Purple=\033[0;35m
+Cyan=\033[0;36m
+White=\033[0;37m
+
+On_Black=\033[40m
+On_Red=\033[41m
+On_Green=\033[42m
+On_Yellow=\033[43m
+On_Blue=\033[44m
+On_Purple=\033[45m
+On_Cyan=\033[46m
+On_White=\033[47m
+
+-include $(DEPS)% 
