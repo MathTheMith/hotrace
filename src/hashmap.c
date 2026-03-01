@@ -6,7 +6,7 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 14:06:44 by lud-adam          #+#    #+#             */
-/*   Updated: 2026/03/01 14:33:23 by mvachon          ###   ########.fr       */
+/*   Updated: 2026/03/01 14:50:17 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,16 +180,12 @@ void map_clean(t_hashmap *map)
 	uint8_t     *entry;
 
 	i = 0;
-	// entry = (uint8_t *)map->array + (i * (map->key_size + map->value_size));
 
 	while (i < map->capacity)
 	{
-		// if (!is_null(entry, map->key_size))
-		// {
 			entry = (uint8_t *)map->array + (i * (map->key_size + map->value_size));
 			free(*(char **)entry);
 			free(*(char **)(entry + map->key_size));
-		// }
 		i++;
 	}
 	free(map->array);

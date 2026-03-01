@@ -6,7 +6,7 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 14:19:50 by lud-adam          #+#    #+#             */
-/*   Updated: 2026/03/01 14:34:15 by mvachon          ###   ########.fr       */
+/*   Updated: 2026/03/01 15:07:31 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ typedef struct hash
 	bool	(*cmp)(const void *, const void *);
 }	t_hashmap;
 
+
+size_t	ft_strlen(const char *s);
 bool	str_cmp(const void *a, const void *b);
 void	init_map(t_hashmap *map, size_t key_size,
 			size_t value_size, bool (*cmp)(const void*, const void*));
