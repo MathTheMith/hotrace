@@ -92,16 +92,12 @@ void read_searches(hashmap *map)
 int main(void)
 {
     hashmap map;
-	char	*line;
+    char    *line;
+
     line = NULL;
     init_map(&map, sizeof(char *), sizeof(char *), str_cmp);
-
-	read_data(&map);
-	
-	read_searches(&map);
-		
-
-	mapClear(&map);
-
+    read_data(&map);
+    read_searches(&map);
+    mapClear(&map);
     return 0;
 }

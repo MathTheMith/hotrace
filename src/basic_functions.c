@@ -20,11 +20,14 @@
 	void	init_map(hashmap *map, size_t key_size, size_t value_size, bool (*cmp)(const void*, const void*))
 	{
 		map->count = 0;
-		map->capacity = 0;
+		map->capacity = 10000000;
 		map->array = NULL;
 		map->key_size = key_size;
 		map->value_size = value_size;
 		map->cmp = cmp;
+		map->array = malloc(map->capacity * (key_size + value_size));
+		if (!map->array)
+			return ;
 	}
 
 	void	free_map(hashmap *map)
