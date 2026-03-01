@@ -16,11 +16,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h> 
-#include "hotrace.h"
 
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 4096
-# endif
+#include "hotrace.h"
 
 char	*ft_strjoin(char *s1, char *s2)
 {
@@ -48,6 +45,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	free(s1);
 	return (str);
 }
+
 char *read_line(void)
 {
     static char buffer[BUFFER_SIZE];
@@ -169,9 +167,7 @@ void	read_searches(t_hashmap *map)
 int	main(void)
 {
 	t_hashmap	map;
-	char		*line;
 
-	line = NULL;
 	init_map(&map, sizeof(char *), sizeof(char *), str_cmp);
 	read_data(&map);
 	read_searches(&map);

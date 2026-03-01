@@ -16,31 +16,6 @@
 #include <string.h>
 #include "hotrace.h"
 
-void	init_map(t_hashmap *map, size_t key_size,
-			size_t value_size, bool (*cmp)(const void*, const void*))
-{
-	map->count = 0;
-	map->capacity = 10000000;
-	map->array = NULL;
-	map->key_size = key_size;
-	map->value_size = value_size;
-	map->cmp = cmp;
-	map->array = malloc(map->capacity * (key_size + value_size));
-	if (!map->array)
-		return ;
-	ft_memset(map->array, 0, map->capacity * (key_size + value_size));
-}
-
-void	free_map(t_hashmap *map)
-{
-	free(map->array);
-	map->array = NULL;
-	map->count = 0;
-	map->capacity = 0;
-	map->key_size = 0;
-	map->value_size = 0;
-}
-
 void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
 	__asm__ volatile (
@@ -93,22 +68,4 @@ void	*ft_memset(void *pointer, int value, size_t count)
 		: "memory"
 	);
 	return (pointer);
-}
-
-int	ft_strcmp(const char *s1, const char *s2)
-{
-	while (*s1 && (*s1 == *s2))
-	{
-		s1++;
-		s2++;
-	}
-	return ((unsigned char)*s1 - (unsigned char)*s2);
-}
-
-bool	str_cmp(const void *a, const void *b)
-{
-	const char	*sa = *(const char**)a;
-	const char	*sb = *(const char**)b;
-
-	return (ft_strcmp(sa, sb) == 0);
 }

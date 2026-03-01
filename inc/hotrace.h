@@ -6,7 +6,7 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 14:19:50 by lud-adam          #+#    #+#             */
-/*   Updated: 2026/03/01 15:07:31 by mvachon          ###   ########.fr       */
+/*   Updated: 2026/03/01 16:30:17 by lud-adam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,14 @@
 # define HOTRACE_H
 
 # define MAX_LOAD 0.75
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 4096
+# endif
+
 # include <stdlib.h>
 # include <stdbool.h>
+# include <stdint.h>
 
 typedef struct hash
 {
@@ -41,5 +47,12 @@ void	free_map(t_hashmap *map);
 void	*ft_realloc(void *ptr, size_t new_size);
 void	*ft_memset(void *pointer, int value, size_t count);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
-bool	str_cmp(const void *a, const void *b);
+void	copy_values(t_hashmap *map, uint8_t *old_entries,
+						uint8_t *new_entries);
+uint8_t	*decrease_malloc(t_hashmap *map, size_t entry_size);
+uint8_t	*linear_probing(t_hashmap *map, void *array, void *key,
+					size_t entry_size);
+bool	is_null(uint8_t *bytes, size_t size);
+void	resize_array(t_hashmap *map);
+
 #endif

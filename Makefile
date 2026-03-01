@@ -6,7 +6,7 @@
 #    By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/28 12:25:05 by lud-adam          #+#    #+#              #
-#    Updated: 2026/02/28 20:50:29 by mvachon          ###   ########.fr        #
+#    Updated: 2026/03/01 16:40:53 by lud-adam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,8 +40,11 @@ P_OBJ = .obj/
 
 SRC = \
 	  main.c \
-	  hashmap.c \
+	  resize_hashmap.c \
 	  basic_functions.c \
+	  utils_hashmap.c \
+	  actions_hashmap.c \
+	  comp.c
 
 #############################################################################################
 #                                                                                           #
