@@ -6,7 +6,7 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 14:06:44 by lud-adam          #+#    #+#             */
-/*   Updated: 2026/02/28 20:58:08 by mvachon          ###   ########.fr       */
+/*   Updated: 2026/03/01 10:08:05 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,8 @@ static void copy_values(hashmap* map, uint8_t *old_entries, uint8_t *new_entries
     map->capacity = map->new_capacity;
 }
 
+#include "stdio.h"
+
 static void resize_array(hashmap *map)
 {
     size_t	entry_size;
@@ -151,15 +153,15 @@ static void resize_array(hashmap *map)
     uint8_t	*new_entries;
 
     if (map->capacity == 0)
-        map->new_capacity = 16;
+        map->new_capacity = 100000;
     else
         map->new_capacity = map->capacity * 1.5;
     entry_size = map->key_size + map->value_size;
     old_entries = (uint8_t *)map->array;
     new_entries = decrease_malloc(map, entry_size);
-    
     ft_memset(new_entries, 0, map->new_capacity * entry_size);
     map->count = 0;
+    printf("mac->capacity = %d\n", map->capacity);    
     copy_values(map, old_entries, new_entries);
 }
 
