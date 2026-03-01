@@ -28,6 +28,7 @@ void	init_map(t_hashmap *map, size_t key_size,
 	map->array = malloc(map->capacity * (key_size + value_size));
 	if (!map->array)
 		return ;
+	ft_memset(map->array, 0, map->capacity * (key_size + value_size));
 }
 
 void	free_map(t_hashmap *map)

@@ -103,5 +103,6 @@ int	main(void)
 	read_data(&map);
 	read_searches(&map);
 	map_clear(&map);
+	free_map(&map);
 	return (0);
 }
