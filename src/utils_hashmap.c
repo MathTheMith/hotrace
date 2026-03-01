@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_hashmap.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lud-adam <lud-adam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/01 16:22:49 by lud-adam          #+#    #+#             */
-/*   Updated: 2026/03/01 16:30:28 by lud-adam         ###   ########.fr       */
+/*   Updated: 2026/03/01 17:52:15 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #include <stdlib.h>
 
-void	init_map(t_hashmap *map, size_t key_size,
+int	init_map(t_hashmap *map, size_t key_size,
 			size_t value_size, bool (*cmp)(const void*, const void*))
 {
 	map->count = 0;
@@ -25,18 +25,9 @@ void	init_map(t_hashmap *map, size_t key_size,
 	map->cmp = cmp;
 	map->array = malloc(map->capacity * (key_size + value_size));
 	if (!map->array)
-		return ;
+		return (-1);
 	ft_memset(map->array, 0, map->capacity * (key_size + value_size));
-}
-
-void	free_map(t_hashmap *map)
-{
-	free(map->array);
-	map->array = NULL;
-	map->count = 0;
-	map->capacity = 0;
-	map->key_size = 0;
-	map->value_size = 0;
+	return (1);
 }
 
 uint8_t	*decrease_malloc(t_hashmap *map, size_t entry_size)

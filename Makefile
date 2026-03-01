@@ -6,19 +6,16 @@
 #    By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/28 12:25:05 by lud-adam          #+#    #+#              #
-#    Updated: 2026/03/01 16:40:53 by lud-adam         ###   ########.fr        #
+#    Updated: 2026/03/01 18:27:43 by mvachon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 .PHONY : all fclean re bonus clean-bin clean-obj
 CC = cc
-CFLAGS = -Wextra -Wall -Werror
-DEPENDANCIES = -MMD -MP
+CFLAGS = -Wextra -Wall -Werror -MMD -MP -Ofast
 NO_DIR = --no-print-directory
-
 MAKE := $(MAKE) -j $(NO_DIR)
 NAME = hotrace
-
 CFLAGS_DEBUG = -Wall -Wextra -g3 -D DEBUG=1
 CC_DEBUG = clang
 CC_DEBUG_CFLAGS = -g3 -D DEBUG=1 -Weverything -Wno-padded -pedantic -O2 -Wwrite-strings -Wconversion -Wno-suggest-override -Wno-suggest-destructor-override -Wno-incompatible-pointer-types-discards-qualifiers -Wno-disabled-macro-expansion
@@ -41,10 +38,11 @@ P_OBJ = .obj/
 SRC = \
 	  main.c \
 	  resize_hashmap.c \
-	  basic_functions.c \
+	  utils.c \
 	  utils_hashmap.c \
 	  actions_hashmap.c \
-	  comp.c
+	  comp.c \
+	  read_line.c
 
 #############################################################################################
 #                                                                                           #

@@ -3,14 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   comp.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lud-adam <lud-adam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/01 16:40:08 by lud-adam          #+#    #+#             */
-/*   Updated: 2026/03/01 16:40:20 by lud-adam         ###   ########.fr       */
+/*   Updated: 2026/03/01 18:34:05 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
+#include <unistd.h>
+
+#include "hotrace.h"
+
+void	ft_write(char *key, char *message)
+{
+	write(1, key, ft_strlen(key));
+	write(1, message, ft_strlen(message));
+}
 
 int	ft_strcmp(const char *s1, const char *s2)
 {

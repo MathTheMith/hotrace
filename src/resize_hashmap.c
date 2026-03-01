@@ -6,13 +6,13 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 14:06:44 by lud-adam          #+#    #+#             */
-/*   Updated: 2026/03/01 16:41:58 by lud-adam         ###   ########.fr       */
+/*   Updated: 2026/03/01 17:43:29 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "hotrace.h"
 
-void	resize_array(t_hashmap *map)
+int	resize_array(t_hashmap *map)
 {
 	size_t	entry_size;
 	uint8_t	*old_entries;
@@ -22,12 +22,15 @@ void	resize_array(t_hashmap *map)
 	entry_size = map->key_size + map->value_size;
 	old_entries = (uint8_t *)map->array;
 	new_entries = decrease_malloc(map, entry_size);
+	if (!new_entries)
+		return (-1);
 	ft_memset(new_entries, 0, map->new_capacity * entry_size);
 	map->count = 0;
 	copy_values(map, old_entries);
 	free(map->array);
 	map->array = new_entries;
 	map->capacity = map->new_capacity;
+	return (1);
 }
 
 void	copy_values(t_hashmap *map, uint8_t *old_entries)

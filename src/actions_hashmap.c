@@ -6,7 +6,7 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/01 16:32:14 by lud-adam          #+#    #+#             */
-/*   Updated: 2026/03/01 16:47:21 by mvachon          ###   ########.fr       */
+/*   Updated: 2026/03/01 18:33:51 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,19 @@ uint8_t	*linear_probing(t_hashmap *map, void *array, void *key,
 	}
 }
 
-bool	map_put(t_hashmap *map, void *key, void *value)
+int	map_put(t_hashmap *map, void *key, void *value)
 {
 	uint8_t	*entry;
-	bool	is_new_key;
 	char	*old_value;
 
 	if (map->count >= map->capacity * MAX_LOAD)
-		resize_array(map);
+	{
+		if (resize_array(map) == -1)
+			return (-1);
+	}
 	entry = linear_probing(map, map->array, key,
 			map->key_size + map->value_size);
-	is_new_key = is_null(entry, map->key_size);
-	if (!is_new_key)
+	if (!is_null(entry, map->key_size))
 	{
 		old_value = *(char **)(entry + map->key_size);
 		if (old_value)
@@ -63,7 +64,7 @@ bool	map_put(t_hashmap *map, void *key, void *value)
 		map->count++;
 	ft_memcpy(entry, key, map->key_size);
 	ft_memcpy(entry + map->key_size, value, map->value_size);
-	return (is_new_key);
+	return (1);
 }
 
 void	map_clean(t_hashmap *map)
