@@ -24,11 +24,13 @@ void	resize_array(t_hashmap *map)
 	new_entries = decrease_malloc(map, entry_size);
 	ft_memset(new_entries, 0, map->new_capacity * entry_size);
 	map->count = 0;
-	copy_values(map, old_entries, new_entries);
+	copy_values(map, old_entries);
+	free(map->array);
+	map->array = new_entries;
+	map->capacity = map->new_capacity;
 }
 
-void	copy_values(t_hashmap *map, uint8_t *old_entries,
-						uint8_t *new_entries)
+void	copy_values(t_hashmap *map, uint8_t *old_entries)
 {
 	int		i;
 	uint8_t	*old_entry;
@@ -54,7 +56,4 @@ void	copy_values(t_hashmap *map, uint8_t *old_entries,
 		map->count++;
 		i++;
 	}
-	free(map->array);
-	map->array = new_entries;
-	map->capacity = map->new_capacity;
-}		
+}

@@ -20,12 +20,10 @@ uint8_t	*linear_probing(t_hashmap *map, void *array, void *key,
 	uint32_t	hash;
 	uint32_t	index;
 	uint8_t		*entry;
-	uint8_t		*tombstone;
 	void		*value;
 
 	hash = hash_function(key);
 	index = hash % map->capacity;
-	tombstone = NULL;
 	while (1)
 	{
 		entry = array + (index * entry_size);
@@ -33,12 +31,7 @@ uint8_t	*linear_probing(t_hashmap *map, void *array, void *key,
 		if (is_null(entry, map->key_size))
 		{
 			if (is_null(value, map->value_size))
-			{
-				if (tombstone != NULL)
-					return (tombstone);
-				else
-					return (entry);
-			}
+				return (entry);
 		}
 		else if (map->cmp(entry, key))
 			return (entry);
@@ -46,7 +39,7 @@ uint8_t	*linear_probing(t_hashmap *map, void *array, void *key,
 	}
 }
 
-bool map_put(t_hashmap *map, void *key, void *value)
+bool	map_put(t_hashmap *map, void *key, void *value)
 {
 	uint8_t	*entry;
 	bool	is_new_key;
@@ -70,22 +63,20 @@ bool map_put(t_hashmap *map, void *key, void *value)
 		map->count++;
 	ft_memcpy(entry, key, map->key_size);
 	ft_memcpy(entry + map->key_size, value, map->value_size);
-
 	return (is_new_key);
 }
 
-void map_clean(t_hashmap *map)
+void	map_clean(t_hashmap *map)
 {
-	int			i;
-	uint8_t     *entry;
+	int		i;
+	uint8_t	*entry;
 
 	i = 0;
-
 	while (i < map->capacity)
 	{
-			entry = (uint8_t *)map->array + (i * (map->key_size + map->value_size));
-			free(*(char **)entry);
-			free(*(char **)(entry + map->key_size));
+		entry = (uint8_t *)map->array + (i * (map->key_size + map->value_size));
+		free(*(char **)entry);
+		free(*(char **)(entry + map->key_size));
 		i++;
 	}
 	free(map->array);
@@ -107,7 +98,7 @@ void	*map_get(t_hashmap *map, void *key)
 	return (entry + map->key_size);
 }
 
-static inline	uint32_t	hash_function(void *key)
+static inline uint32_t	hash_function(void *key)
 {
 	char		*str;
 	uint8_t		*bytes;

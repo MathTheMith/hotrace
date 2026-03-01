@@ -35,7 +35,6 @@ typedef struct hash
 	bool	(*cmp)(const void *, const void *);
 }	t_hashmap;
 
-
 size_t	ft_strlen(const char *s);
 bool	str_cmp(const void *a, const void *b);
 void	init_map(t_hashmap *map, size_t key_size,
@@ -47,11 +46,10 @@ void	free_map(t_hashmap *map);
 void	*ft_realloc(void *ptr, size_t new_size);
 void	*ft_memset(void *pointer, int value, size_t count);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
-void	copy_values(t_hashmap *map, uint8_t *old_entries,
-						uint8_t *new_entries);
+void	copy_values(t_hashmap *map, uint8_t *old_entries);
 uint8_t	*decrease_malloc(t_hashmap *map, size_t entry_size);
 uint8_t	*linear_probing(t_hashmap *map, void *array, void *key,
-					size_t entry_size);
+			size_t entry_size);
 bool	is_null(uint8_t *bytes, size_t size);
 void	resize_array(t_hashmap *map);
 
