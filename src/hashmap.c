@@ -6,16 +6,15 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 14:06:44 by lud-adam          #+#    #+#             */
-/*   Updated: 2026/03/01 12:45:31 by mvachon          ###   ########.fr       */
+/*   Updated: 2026/03/01 14:33:23 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "hotrace.h"
-
 #include <stddef.h>
 #include <stdint.h>
-#include "stdio.h"
+#include <stdio.h>
 #include <string.h>
+#include "hotrace.h"
 
 static inline	uint32_t	hash_function(void *key)
 {
@@ -92,15 +91,6 @@ void	*map_get(t_hashmap *map, void *key)
 	if (is_null(entry, map->key_size))
 		return (NULL);
 	return (entry + map->key_size);
-}
-
-void	map_clear(t_hashmap *map)
-{
-	size_t	entry_size;
-
-	entry_size = map->key_size + map->value_size;
-	ft_memset(map->array, 0, map->capacity * entry_size);
-	map->count = 0;
 }
 
 static uint8_t	*decrease_malloc(t_hashmap *map, size_t entry_size)
@@ -183,3 +173,27 @@ bool	map_put(t_hashmap *map, void *key, void *value)
 	ft_memcpy(entry + map->key_size, value, map->value_size);
 	return (is_new_key);
 }
+
+void map_clean(t_hashmap *map)
+{
+	int      i;
+	uint8_t     *entry;
+
+	i = 0;
+	// entry = (uint8_t *)map->array + (i * (map->key_size + map->value_size));
+
+	while (i < map->capacity)
+	{
+		// if (!is_null(entry, map->key_size))
+		// {
+			entry = (uint8_t *)map->array + (i * (map->key_size + map->value_size));
+			free(*(char **)entry);
+			free(*(char **)(entry + map->key_size));
+		// }
+		i++;
+	}
+	free(map->array);
+	map->array = NULL;
+	map->count = 0;
+	map->capacity = 0;
+}		

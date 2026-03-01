@@ -6,7 +6,7 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 14:19:50 by lud-adam          #+#    #+#             */
-/*   Updated: 2026/03/01 12:39:28 by mvachon          ###   ########.fr       */
+/*   Updated: 2026/03/01 14:34:15 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	init_map(t_hashmap *map, size_t key_size,
 			size_t value_size, bool (*cmp)(const void*, const void*));
 bool	map_put(t_hashmap *map, void *key, void *value);
 void	*map_get(t_hashmap *map, void *key);
-void	map_clear(t_hashmap *map);
+void	map_clean(t_hashmap *map);
 void	free_map(t_hashmap *map);
 void	*ft_realloc(void *ptr, size_t new_size);
 void	*ft_memset(void *pointer, int value, size_t count);

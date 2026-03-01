@@ -6,7 +6,7 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 08:15:28 by mvachon           #+#    #+#             */
-/*   Updated: 2026/03/01 13:44:23 by mvachon          ###   ########.fr       */
+/*   Updated: 2026/03/01 14:34:54 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,20 @@ void	read_data(t_hashmap *map)
 	while (1)
 	{
 		key = read_line();
-		if (!key || key[0] == '\0' || key[0] == '\n')
+        if (!key)
+            break;
+		if(key[0] == '\0' || key[0] == '\n')
+        {
+            free(key);
 			break ;
+        }
 		value = read_line();
 		if (!value || key[0] == '\n')
+        {
+            free(value);
+            free(key);
 			break ;
+        }
 		map_put(map, &key, &value);
 	}
 }
@@ -102,7 +111,6 @@ int	main(void)
 	init_map(&map, sizeof(char *), sizeof(char *), str_cmp);
 	read_data(&map);
 	read_searches(&map);
-	map_clear(&map);
-	free_map(&map);
+	map_clean(&map);
 	return (0);
 }
