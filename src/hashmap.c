@@ -157,26 +157,54 @@ static	void	resize_array(t_hashmap *map)
 	copy_values(map, old_entries, new_entries);
 }
 
-bool	map_put(t_hashmap *map, void *key, void *value)
+// bool	map_put(t_hashmap *map, void *key, void *value)
+// {
+// 	uint8_t	*entry;
+// 	bool	is_new_key;
+//
+// 	if (map->count >= map->capacity * MAX_LOAD)
+// 		resize_array(map);
+// 	entry = linear_probing(map, map->array, key,
+// 			(map->key_size + map->value_size));
+// 	is_new_key = is_null(entry, map->key_size);
+// 	if (is_new_key && is_null(entry + map->key_size, map->value_size))
+// 		map->count++;
+// 	ft_memcpy(entry, key, map->key_size);
+// 	ft_memcpy(entry + map->key_size, value, map->value_size);
+// 	return (is_new_key);
+// }
+//
+bool map_put(t_hashmap *map, void *key, void *value)
 {
 	uint8_t	*entry;
 	bool	is_new_key;
+	char	*old_value;
 
-	if (map->count >= map->capacity * MAX_LOAD)
-		resize_array(map);
 	entry = linear_probing(map, map->array, key,
-			(map->key_size + map->value_size));
+			map->key_size + map->value_size);
+
 	is_new_key = is_null(entry, map->key_size);
-	if (is_new_key && is_null(entry + map->key_size, map->value_size))
+
+	if (!is_new_key)
+	{
+		old_value = *(char **)(entry + map->key_size);
+		if (old_value)
+			free(old_value);
+		old_value = *(char **)(entry);
+		if (old_value)
+			free(old_value);
+	}
+	else
 		map->count++;
 	ft_memcpy(entry, key, map->key_size);
 	ft_memcpy(entry + map->key_size, value, map->value_size);
+
 	return (is_new_key);
 }
 
 void map_clean(t_hashmap *map)
 {
-	int      i;
+	int			i;
 	uint8_t     *entry;
 
 	i = 0;

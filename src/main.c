@@ -121,20 +121,20 @@ void	read_data(t_hashmap *map)
 	while (1)
 	{
 		key = read_line();
-        if (!key)
-            break;
+		if (!key)
+		    break;
 		if(key[0] == '\0' || key[0] == '\n')
-        {
-            free(key);
+		{
+			free(key);
 			break ;
-        }
+		}
 		value = read_line();
 		if (!value || key[0] == '\n')
-        {
-            free(value);
-            free(key);
+		{
+		    free(value);
+		    free(key);
 			break ;
-        }
+		}
 		map_put(map, &key, &value);
 	}
 }
