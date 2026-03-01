@@ -6,7 +6,7 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 08:15:28 by mvachon           #+#    #+#             */
-/*   Updated: 2026/03/01 15:46:28 by mvachon          ###   ########.fr       */
+/*   Updated: 2026/03/01 16:56:42 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,11 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h> 
-
 #include "hotrace.h"
+
+#ifndef BUFFER_SIZE
+# define BUFFER_SIZE 4096
+#endif
 
 char	*ft_strjoin(char *s1, char *s2)
 {
@@ -46,69 +49,109 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (str);
 }
 
-char *read_line(void)
+static int	refill_buffer(char *buffer, int *buf_size, int *buf_pos)
 {
-    static char buffer[BUFFER_SIZE];
-    static int  buf_size = 0;
-    static int  buf_pos = 0;
-    char        line[4096];
-    char        *heap_line;
-    char        *tmp;
-    int         capacity;
-    int         line_len;
-    char        *result;
+	*buf_size = read(0, buffer, BUFFER_SIZE);
+	*buf_pos = 0;
+	if (*buf_size <= 0)
+		return (0);
+	return (1);
+}
 
-    line_len = 0;
-    capacity = 4096;
-    heap_line = NULL;
-    while (1)
-    {
-        if (buf_pos >= buf_size)
-        {
-            buf_size = read(0, buffer, BUFFER_SIZE);
-            buf_pos = 0;
-            if (buf_size <= 0)
-            {
-                if (line_len == 0)
-                {
-                    free(heap_line);
-                    return (NULL);
-                }
-                break ;
-            }
-        }
-        if (buffer[buf_pos] == '\n')
-        {
-            buf_pos++;
-            break ;
-        }
-        if (line_len + 1 >= capacity)
-        {
-            capacity *= 1.5;
-            tmp = malloc(capacity);
-            if (!tmp)
-            {
-                free(heap_line);
-                return (NULL);
-            }
-            ft_memcpy(tmp, heap_line ? heap_line : line, line_len);
-            free(heap_line);
-            heap_line = tmp;
-        }
-        if (heap_line)
-            heap_line[line_len++] = buffer[buf_pos++];
-        else
-            line[line_len++] = buffer[buf_pos++];
-    }
-    if (heap_line)
-    {
-        heap_line[line_len] = '\0';
-        return (heap_line);
-    }
-    line[line_len] = '\0';
-    result = malloc(line_len + 1);
-    ft_memcpy(result, line, line_len + 1);
-    return (result);
+static int	grow_heap(t_rl *rl)
+{
+	char	*tmp;
+
+	rl->capacity *= 2;
+	tmp = malloc(rl->capacity);
+	if (!tmp)
+	{
+		free(rl->heap_line);
+		return (0);
+	}
+	if (rl->heap_line)
+		ft_memcpy(tmp, rl->heap_line, rl->line_len);
+	else
+		ft_memcpy(tmp, rl->line, rl->line_len);
+	free(rl->heap_line);
+	rl->heap_line = tmp;
+	return (1);
+}
+
+static char	*finalize_line(t_rl *rl)
+{
+	char	*result;
+
+	if (rl->heap_line)
+	{
+		rl->heap_line[rl->line_len] = '\0';
+		return (rl->heap_line);
+	}
+	rl->line[rl->line_len] = '\0';
+	result = malloc(rl->line_len + 1);
+	if (!result)
+		return (NULL);
+	ft_memcpy(result, rl->line, rl->line_len + 1);
+	return (result);
+}
+
+static int	read_char(t_rl *rl, char *buffer, int *buf_pos)
+{
+	if (rl->line_len + 1 >= rl->capacity)
+	{
+		if (!grow_heap(rl))
+			return (0);
+	}
+	if (rl->heap_line)
+		rl->heap_line[rl->line_len++] = buffer[(*buf_pos)++];
+	else
+		rl->line[rl->line_len++] = buffer[(*buf_pos)++];
+	return (1);
+}
+
+static int	handle_eof(t_rl *rl)
+{
+	if (rl->line_len == 0)
+	{
+		free(rl->heap_line);
+		return (0);
+	}
+	return (1);
+}
+
+static int	read_loop(t_rl *rl, char *buffer, int *buf_size,
+			int *buf_pos)
+{
+	while (1)
+	{
+		if (*buf_pos >= *buf_size)
+		{
+			if (!refill_buffer(buffer, buf_size, buf_pos))
+				return (handle_eof(rl));
+		}
+		if (buffer[*buf_pos] == '\n')
+		{
+			(*buf_pos)++;
+			return (1);
+		}
+		if (!read_char(rl, buffer, buf_pos))
+			return (0);
+	}
+}
+
+char	*read_line(void)
+{
+	static char	buffer[BUFFER_SIZE];
+	static int	buf_size = 0;
+	static int	buf_pos = 0;
+	t_rl		rl;
+
+	rl.line_len = 0;
+	rl.capacity = 4096;
+	rl.heap_line = NULL;
+	if (!read_loop(&rl, buffer, &buf_size, &buf_pos))
+		return (NULL);
+	return (finalize_line(&rl));
 }
 
 void	read_data(t_hashmap *map)
@@ -120,8 +163,8 @@ void	read_data(t_hashmap *map)
 	{
 		key = read_line();
 		if (!key)
-		    break;
-		if(key[0] == '\0' || key[0] == '\n')
+			break ;
+		if (key[0] == '\0' || key[0] == '\n')
 		{
 			free(key);
 			break ;
@@ -129,8 +172,8 @@ void	read_data(t_hashmap *map)
 		value = read_line();
 		if (!value || key[0] == '\n')
 		{
-		    free(value);
-		    free(key);
+			free(value);
+			free(key);
 			break ;
 		}
 		map_put(map, &key, &value);

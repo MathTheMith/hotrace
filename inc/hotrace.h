@@ -6,7 +6,7 @@
 /*   By: mvachon <mvachon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 14:19:50 by lud-adam          #+#    #+#             */
-/*   Updated: 2026/03/01 16:30:17 by lud-adam         ###   ########.fr       */
+/*   Updated: 2026/03/01 16:54:31 by mvachon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,16 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <stdint.h>
+
+typedef struct rl
+{
+	char        *heap_line;
+    char        *tmp;
+    int         capacity;
+    int         line_len;
+    char        *result;
+	char		line[4096];
+} t_rl;
 
 typedef struct hash
 {
